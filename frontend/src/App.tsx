@@ -1,7 +1,24 @@
+import {useEffect} from 'react';
 import "./App.css";
+import WebSocketService from './services/websocketSerice';
+import * as Comp from './components/index'
 
-function App() {
-  return <h1>Hello Winston!</h1>;
+const App: React.FC = () => {
+
+  useEffect(() => {
+    const ws = new WebSocketService('ws://localhost:3000');
+
+    return () => {
+      ws.closeConnection();
+    }
+  }, []);
+
+
+  return (
+    <div>
+      <Comp.TaskList />
+    </div>
+  );
 }
 
 export default App;
