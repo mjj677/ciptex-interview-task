@@ -16,13 +16,15 @@ export const setupWebSocket = (server: Server) => {
 
     ws.on("message", (message) => {
       try {
+        console.log("Received message:", message.toString());
         const data = JSON.parse(message.toString());
+
 
         if (data.type === "task-update") {
           wss.clients.forEach((client) => {
-            if (client.readyState === client.OPEN) {
-              client.send(JSON.stringify(data));
-            }
+            delete data.title;
+            console.log(JSON.stringify(data), "<<<< message just before it's sent")
+            client.send(JSON.stringify(data));
           });
         } else {
           console.warn("Unsupported message type:", data.type);
@@ -33,15 +35,13 @@ export const setupWebSocket = (server: Server) => {
       }
     });
 
-    ws.on("error", (error) => {
-      console.error("WebSocket error:", error);
-    });
-
     ws.on("close", (code, reason) => {
       console.log(`Client disconnected. Code: ${code}, Reason: ${reason}`);
     });
 
     ws.send(JSON.stringify({ message: "Welcome to my WebSocket server" }));
+
+    ws.send(JSON.stringify({ type: "task-update", taskId: "1", status: "complete"}));
   });
 
   wss.on("error", (error) => {

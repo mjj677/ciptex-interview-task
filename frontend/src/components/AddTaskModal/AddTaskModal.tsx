@@ -3,12 +3,14 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
+import WebSocketService from "../../services/websocketService";
 
 interface AddTaskModalProps {
   show: boolean;
   handleClose: () => void;
   tasks: { taskId: string; title: string; status: string }[];
   refreshTasks: () => void;
+  wsService: WebSocketService | null;
 }
 
 const AddTaskModal: React.FC<AddTaskModalProps> = ({
@@ -16,6 +18,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
   handleClose,
   tasks,
   refreshTasks,
+  wsService,
 }) => {
   const [title, setTitle] = useState("");
   const [status, setStatus] = useState("");
@@ -30,12 +33,23 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
     }
 
     try {
-      getNextTaskId();
+      const newTaskId = getNextTaskId();
       await axios.post("http://localhost:3000/tasks", {
-        taskId,
+        taskId : newTaskId,
         title,
         status,
       });
+
+      if (wsService) {
+        const wsMessage = {
+            type: 'task-update',
+            taskId: newTaskId.toString(), 
+            title, 
+            status
+        };
+        wsService.sendMessage(wsMessage);
+      }
+
       setTitle("");
       setStatus("");
       setTaskId(getNextTaskId());
