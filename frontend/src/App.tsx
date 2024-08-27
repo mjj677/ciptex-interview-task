@@ -1,7 +1,7 @@
 import {useEffect} from 'react';
 import "./App.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import WebSocketService from './services/websocketSerice';
+import WebSocketService from './services/websocketService';
 import * as Component from './components/index'
 
 const App: React.FC = () => {
@@ -24,3 +24,4 @@ const App: React.FC = () => {
 }
 
 export default App;
+
