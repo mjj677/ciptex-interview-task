@@ -1,0 +1,14 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+    box-sizing: border-box;
+}
+
+.buttonWrapper{
+    justify-content: space-evenly;
+}
+
+.updateButton {
+    margin-right: 10px;
+}

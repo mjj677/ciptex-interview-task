@@ -1,7 +1,8 @@
 import {useEffect} from 'react';
 import "./App.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import WebSocketService from './services/websocketSerice';
-import * as Comp from './components/index'
+import * as Component from './components/index'
 
 const App: React.FC = () => {
 
@@ -15,8 +16,9 @@ const App: React.FC = () => {
 
 
   return (
-    <div>
-      <Comp.TaskList />
+    <div className='page-container'>
+      <Component.Header />
+      <Component.TaskList />
     </div>
   );
 }
