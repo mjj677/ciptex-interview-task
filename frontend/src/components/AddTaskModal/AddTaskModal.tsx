@@ -78,10 +78,15 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({
             <Form.Label>Status</Form.Label>
             <Form.Control
               as="select"
-              placeholder="Enter task status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-            />
+            >
+            <option value="incomplete">Incomplete</option>
+              <option value="urgent">Urgent</option>
+              <option value="complete">Complete</option>
+              <option value="in-progress">In Progress</option>
+              <option value="pending">Pending</option>
+            </Form.Control>
           </Form.Group>
           <Button variant="primary" type="submit">
             Add Task
