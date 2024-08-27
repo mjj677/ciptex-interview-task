@@ -59,6 +59,7 @@ const TaskList: React.FC = () => {
             status={task.status}
             taskId={task.taskId}
             onDelete={handleDeleteTaskClick}
+            refreshTasks={refreshTasks}
           />
         );
       })}
