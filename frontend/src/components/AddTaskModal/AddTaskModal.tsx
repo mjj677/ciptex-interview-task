@@ -1,42 +1,56 @@
-import { useState, useEffect } from 'react';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import axios from "axios";
 
 interface AddTaskModalProps {
   show: boolean;
   handleClose: () => void;
-  tasks: { id: string; title: string; status: string }[];
+  tasks: { taskId: string; title: string; status: string }[];
   refreshTasks: () => void;
 }
 
-const AddTaskModal: React.FC<AddTaskModalProps> = ({ show, handleClose, tasks, refreshTasks }) => {
-  const [title, setTitle] = useState('');
-  const [status, setStatus] = useState('');
-  const [taskId, setTaskId] = useState('');
+const AddTaskModal: React.FC<AddTaskModalProps> = ({
+  show,
+  handleClose,
+  tasks,
+  refreshTasks,
+}) => {
+  const [title, setTitle] = useState("");
+  const [status, setStatus] = useState("");
+  const [taskId, setTaskId] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title || !status) {
-      alert('Please fill out all fields.');
+      alert("Please fill out all fields.");
       return;
     }
 
     try {
-      getNextTaskId();  
-      await axios.post('http://localhost:3000/tasks', { taskId, title, status });
+      getNextTaskId();
+      await axios.post("http://localhost:3000/tasks", {
+        taskId,
+        title,
+        status,
+      });
+      setTitle("");
+      setStatus("");
+      setTaskId(getNextTaskId());
       refreshTasks();
-      handleClose(); 
+      handleClose();
     } catch (error) {
-      console.error('Error adding task:', error);
+      console.error("Error adding task:", error);
     }
   };
 
   const getNextTaskId = () => {
-    if (tasks.length === 0) return '1';
-    const highestId = Math.max(...tasks.map(task => parseInt(task.id, 10)));
+    if (tasks.length === 0) return "1";
+    const highestId = Math.max(
+      ...tasks.map((task) => parseInt(task.taskId, 10))
+    );
     return (highestId + 1).toString();
   };
 
@@ -63,7 +77,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ show, handleClose, tasks, r
           <Form.Group controlId="formStatus">
             <Form.Label>Status</Form.Label>
             <Form.Control
-              type="text"
+              as="select"
               placeholder="Enter task status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}

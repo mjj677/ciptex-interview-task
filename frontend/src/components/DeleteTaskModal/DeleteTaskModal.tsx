@@ -19,6 +19,11 @@ const DeleteTaskModal: React.FC<AddTaskModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!taskId) {
+      alert("No task ID provided.");
+      return;
+    }
+
     try {
       await axios.delete(`http://localhost:3000/tasks/${taskId}`);
       refreshTasks();
