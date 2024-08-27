@@ -7,7 +7,7 @@ import AddTaskModal from "../AddTaskModal/AddTaskModal";
 import DeleteTaskModal from "../DeleteTaskModal/DeleteTaskModal";
 
 interface Task {
-  id: string;
+  taskId: string;
   title: string;
   status: string;
 }
@@ -16,6 +16,7 @@ const TaskList: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
   const fetchTasks = async () => {
     const response = await axios.get<Task[]>("http://localhost:3000/tasks");
@@ -28,29 +29,52 @@ const TaskList: React.FC = () => {
 
   const handleAddTaskClick = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
-  const handleDeleteTaskClick = () => setShowDeleteModal(true);
 
-  const refreshTasks = () => {
-    fetchTasks();
-  }
+  const handleDeleteTaskClick = (taskId: string) => {
+    setTaskToDelete(taskId);
+    setShowDeleteModal(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setTaskToDelete(null);
+  };
+
+  const refreshTasks = async () => {
+    await fetchTasks();
+
+    setTasks((prevTasks) => [
+      ...prevTasks.sort((a, b) => parseInt(b.taskId) - parseInt(a.taskId)),
+    ]);
+  };
 
   return (
     <div className={styles.container}>
-
-        {tasks.map((task) => (
-            <TaskCard key={task.id} title={task.title} status={task.status} />
-        ))}
-        <AddTaskCard onClick={handleAddTaskClick} />
-        <AddTaskModal 
-        show={showModal} 
+      {tasks.map((task) => {
+        console.log(task, "<<<<<<<<");
+        return (
+          <TaskCard
+            key={task.taskId}
+            title={task.title}
+            status={task.status}
+            taskId={task.taskId}
+            onDelete={handleDeleteTaskClick}
+          />
+        );
+      })}
+      <AddTaskCard onClick={handleAddTaskClick} />
+      <AddTaskModal
+        show={showModal}
         handleClose={handleCloseModal}
         tasks={tasks}
         refreshTasks={refreshTasks}
-        />
-        <DeleteTaskModal 
+      />
+      <DeleteTaskModal
         show={showDeleteModal}
-        handleClose={handleCloseModal}
-        />
+        handleClose={handleCloseDeleteModal}
+        refreshTasks={refreshTasks}
+        taskId={taskToDelete || ""}
+      />
     </div>
   );
 };
